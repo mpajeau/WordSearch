@@ -5,14 +5,20 @@ package net.pajeau;
 
 import net.pajeau.WordSearch;
 
-import org.junit.Test;
+import org.junit.*;
 import static org.junit.Assert.*;
 
 import java.io.*;
 
 public class AppTest {
+    private static WordSearch myWordSearch;
+
+    @BeforeClass public static void setupTestSession()
+    {
+        myWordSearch = new WordSearch();
+    }
+
     @Test public void wordSearchThrowsIOExceptionIfPuzzleDataIsEmpty() {
-        WordSearch aWordSearch = new WordSearch();
         IOException anException = null;
 
         String anEmptyPuzzle = "";
@@ -20,7 +26,25 @@ public class AppTest {
 
         try
         {
-            aWordSearch.importPuzzle(aStringReader);
+            myWordSearch.importPuzzle(aStringReader);
+        }
+        catch (IOException e)
+        {
+            anException = e;
+        }
+
+        assertNotNull("No IOException was thrown!", anException);
+    }
+
+    @Test public void wordSearchThrowsIOExceptionIfSearchWordsAreShorterThanTwoCharacters() {
+        IOException anException = null;
+
+        String anInvalidSearchWordList = "AB,C,DE,FG,HI";
+        StringReader aStringReader = new StringReader(anInvalidSearchWordList);
+
+        try
+        {
+            myWordSearch.importPuzzle(aStringReader);
         }
         catch (IOException e)
         {
