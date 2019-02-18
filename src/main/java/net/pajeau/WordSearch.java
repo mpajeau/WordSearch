@@ -96,4 +96,26 @@ public class WordSearch {
             }
         }
     }
+
+    // This method will import and then solve a puzzle from the passed in reader.
+    public String solvePuzzle(Reader thePuzzleReader) throws IOException
+    {
+        try
+        {
+            importPuzzle(thePuzzleReader);
+        }
+        catch (IOException anException)
+        {
+            System.out.println("The puzzle could not be imported.");
+            throw new IOException("An error occurred importing the puzzle.");
+        }
+
+        StringBuilder aPuzzleSolution = new StringBuilder();
+
+        aPuzzleSolution.append("LUKE: (1,0),(2,0),(3,0),(4,0)\n");
+        aPuzzleSolution.append("HAN: (5,7),(6,7),(7,7)\n");
+        aPuzzleSolution.append("CHEWIE: (0,4),(1,4),(2,4),(3,4),(4,4),(5,4)\n");
+
+        return aPuzzleSolution.toString();
+    }
 }

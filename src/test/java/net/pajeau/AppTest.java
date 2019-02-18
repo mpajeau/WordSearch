@@ -65,6 +65,29 @@ public class AppTest {
         assertNotNull("No IOException was thrown!", anException);
     }
 
+    @Test public void wordSearchThrowsIOExceptionIfNoSearchWordsAreSubmitted() {
+        IOException anException = null;
+
+        String anEmptySearchWordList = 
+            "\n" + 
+            "U,M,K,H,U,L,K,I,N,V,J,O,C,W,E\n";
+        StringReader aStringReader = new StringReader(anEmptySearchWordList);
+
+        try
+        {
+            myWordSearch.importPuzzle(aStringReader);
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+            anException = e;
+        }
+
+        aStringReader.close();
+
+        assertNotNull("No IOException was thrown!", anException);
+    }
+
     @Test public void wordSearchThrowsIOExceptionIfPuzzleGridHasFewerThanTwoLines() {
         IOException anException = null;
 
@@ -152,5 +175,39 @@ public class AppTest {
         aStringReader.close();
 
         assertNotNull("No IOException was thrown!", anException);
+    }
+
+    @Test public void wordSearchCanFindForwardHorizontalWords() {
+        String aPuzzleGrid = 
+            "LUKE,HAN,CHEWIE\n" + 
+            "L,L,U,K,E,Z,Z,W\n" + 
+            "H,S,U,P,J,P,R,J\n" +
+            "B,R,J,S,O,E,Q,E\n" +
+            "A,Y,O,A,G,C,I,R\n" +
+            "C,H,E,W,I,E,K,Z\n" +
+            "B,L,Q,S,L,N,E,E\n" +
+            "O,K,R,I,K,A,M,M\n" +
+            "K,Y,L,B,Q,H,A,N\n";
+            
+        StringReader aStringReader = new StringReader(aPuzzleGrid);
+        String aPuzzleSolution = "";
+
+        try
+        {
+             aPuzzleSolution = myWordSearch.solvePuzzle(aStringReader);
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+
+        aStringReader.close();
+
+        String anExpectedResult = 
+            "LUKE: (1,0),(2,0),(3,0),(4,0)\n" + 
+            "HAN: (5,7),(6,7),(7,7)\n" + 
+            "CHEWIE: (0,4),(1,4),(2,4),(3,4),(4,4),(5,4)\n";
+
+        assertEquals(anExpectedResult, aPuzzleSolution);
     }
 }
