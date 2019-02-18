@@ -143,6 +143,10 @@ public class WordSearch {
                         {
                             aFoundFlag = true;
                         }
+                        else if (searchDownward(aRow, aColumn, aSearchWord.getKey(), aSearchResult))
+                        {
+                            aFoundFlag = true;
+                        }
 
                         if (aFoundFlag)
                         {
@@ -215,4 +219,57 @@ public class WordSearch {
         }
     }
     
+    // This method searches downward from the given grid position for the given search word.
+    private boolean searchDownward(int theRow, int theColumn, String theSearchWord, StringBuilder theSearchResult)
+    {
+        // Run through the letters of the search word to see if it is in the grid
+        // starting at the passed-in coordinates.
+        boolean aFoundTheWordFlag = false;
+        int aSearchWordLetterIndex = 0;
+        int aGridLetterIndex = theRow;
+        while ((aSearchWordLetterIndex < theSearchWord.length()) &&
+               (aGridLetterIndex < myPuzzleGrid.size()))
+        {
+            // Get the current grid letter.
+            Character aSearchWordLetter = theSearchWord.charAt(aSearchWordLetterIndex);
+            Character aGridLetter = myPuzzleGrid.get(aGridLetterIndex).get(theColumn).charAt(0);
+            if (aSearchWordLetter == aGridLetter)
+            {
+                // The next letter was found
+                if (aSearchWordLetterIndex < (theSearchWord.length() - 1))
+                {
+                    theSearchResult.append("(" + theColumn + "," + aGridLetterIndex + "),");
+                }
+                else
+                {
+                    // Found the last character, done searching for the word!
+                    theSearchResult.append("(" + theColumn + "," + aGridLetterIndex + ")");
+                    aFoundTheWordFlag = true;
+                    break;
+                }
+            }
+            else
+            {
+                // The next grid letter does NOT match the next letter in the search word
+                break;
+            }
+
+            // Move to the next letter in the search word and the grid.
+            aSearchWordLetterIndex++;
+            aGridLetterIndex++;
+        }
+
+        if (aFoundTheWordFlag)
+        {
+            // Found the word, finish up the search result and return success!
+            theSearchResult.append("\n");
+            return true;
+        }
+        else
+        {
+            // Didn't find the word, clear the search result and return failure.
+            theSearchResult.setLength(0);
+            return false;
+        }
+    }
 }

@@ -229,4 +229,38 @@ public class WordSearchAppTest {
 
         assertEquals(anExpectedResult, aPuzzleSolution);
     }
+
+    @Test public void wordSearchCanFindDownwardVerticalWords() {
+        String aPuzzleGrid = 
+            "ROBB,EDDARD,JON\n" + 
+            "L,J,U,K,E,Z,Z,W\n" + 
+            "H,O,U,P,J,P,R,J\n" +
+            "B,N,J,R,O,E,Q,E\n" +
+            "A,Y,O,O,G,D,I,R\n" +
+            "X,P,E,B,I,D,K,Z\n" +
+            "B,L,Q,B,L,A,E,E\n" +
+            "O,K,R,I,K,R,M,M\n" +
+            "K,Y,L,B,Q,D,A,N\n";
+            
+        StringReader aStringReader = new StringReader(aPuzzleGrid);
+        String aPuzzleSolution = "";
+
+        try
+        {
+             aPuzzleSolution = myWordSearch.solvePuzzle(aStringReader);
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+
+        aStringReader.close();
+
+        String anExpectedResult = 
+            "ROBB: (3,2),(3,3),(3,4),(3,5)\n" + 
+            "EDDARD: (5,2),(5,3),(5,4),(5,5),(5,6),(5,7)\n" + 
+            "JON: (1,0),(1,1),(1,2)\n";
+
+        assertEquals(anExpectedResult, aPuzzleSolution);
+    }
 }
