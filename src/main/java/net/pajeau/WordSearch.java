@@ -5,6 +5,21 @@ import java.util.*;
 
 public class WordSearch {
 
+    ////////////////////////////////////////////////
+    // Constants
+
+    // Horizontal search directions
+    private static final int FORWARD = 1;
+    private static final int NONE = 0;
+    private static final int BACKWARD = -1;
+
+    // Horizontal search directions
+    private static final int DOWNWARD = 1;
+    private static final int UPWARD = -1;
+
+    ////////////////////////////////////////////////
+    // Properties
+
     // This field contains the list of words to be searched for in the current puzzle
     // as well as any search result from searching the grid for the word.
     private Map<String,String> mySearchWords;
@@ -12,18 +27,25 @@ public class WordSearch {
     // This field contains the puzzle grid to be searched.
     private List<List<String>> myPuzzleGrid;
 
-    // This method clears the current puzzle.
+    // Summary: This method clears the current puzzle's data out of internal fields.
     public void ResetPuzzle()
     {
         mySearchWords = null;
         myPuzzleGrid = null;
     }
 
-    // This method imports a puzzle from a passed-in Reader (e.g., string or file).  The puzzle
-    // should contain a list of comma-separated search words on the first line.  Each search word
-    // must be at least two letters long.  Each subsequent line of the file should contain 
-    // comma-separated letters making up one row of the grid to be searched.  The grid must
-    // be square.
+    ////////////////////////////////////////////////
+    // Methods
+
+    // Summary: This method imports a puzzle from a passed-in Reader (e.g., string or file) and 
+    // stores its data in internal fields.
+    // Parameters:
+    //      thePuzzleReader: a Reader (e.g., FileReader, StringReader) containing the puzzle data.
+    // Note:
+    //      The puzzle should contain a list of comma-separated search words on the first line.  
+    //      Each search word must be at least two letters long.  Each subsequent line of the file 
+    //      should contain comma-separated letters making up one row of the grid to be searched.  
+    //      The grid must be square.
     public void importPuzzle(Reader thePuzzleReader) throws IOException
     {
         if (thePuzzleReader == null)
@@ -105,7 +127,12 @@ public class WordSearch {
         }
     }
 
-    // This method will import and then solve a puzzle from the passed in reader.
+    // Summary: This method will import and then solve a puzzle from the passed in reader.
+    // Parameters:
+    //      thePuzzleReader: a Reader (e.g., FileReader, StringReader) containing the puzzle data.
+    // Returns:
+    //      the solution for the puzzle - a list of the search words and, if the word was found a lit
+    //      of the coordinates in the puzzle grid where the word was found
     public String solvePuzzle(Reader thePuzzleReader) throws IOException
     {
         try
@@ -139,11 +166,14 @@ public class WordSearch {
                         // current search word.
                         boolean aFoundFlag = false;
                         StringBuilder aSearchResult = new StringBuilder();
-                        if (searchForward(aRow, aColumn, aSearchWord.getKey(), aSearchResult))
+
+                        // Search forward
+                        if (search(aRow, aColumn, FORWARD, NONE, aSearchWord.getKey(), aSearchResult))
                         {
                             aFoundFlag = true;
                         }
-                        else if (searchDownward(aRow, aColumn, aSearchWord.getKey(), aSearchResult))
+                        // Search downward
+                        else if (search(aRow, aColumn, NONE, DOWNWARD, aSearchWord.getKey(), aSearchResult))
                         {
                             aFoundFlag = true;
                         }
@@ -164,32 +194,49 @@ public class WordSearch {
         return aPuzzleSolution.toString();
     }
 
-    // This method searches forward from the given grid position for the given search word.
-    private boolean searchForward(int theRow, int theColumn, String theSearchWord, StringBuilder theSearchResult)
+    // Summary: This method searches in the given horizontal and vertical directions starting from the given grid position
+    // for the given search word.
+    // Parameters:
+    //      theRow: the grid row to start searching at
+    //      theColumne: the grid column to start searching at
+    //      theHorizontalDirection: the horizontal direction to search (1 = forward, 0 = none [search only vertically], -1 = backward)
+    //      theVerticalDirection: the vertical direction to search (1 = downward, 0 = none [search only horizontally], -1 = upward)
+    //      theSearchWord: the word to search for
+    //      theSearchResult: a holder to return the search result
+    // Returns:
+    //      true if the word is found.  theSearchResult will contain the list of coordinates where the search word's letters were found in the grid.
+    //      false if the word is not found.  theSearchResult will be empty.
+    private boolean search(int theRow, int theColumn, int theHorizontalDirection, int theVerticalDirection, String theSearchWord, StringBuilder theSearchResult)
     {
         // Run through the letters of the search word to see if it is in the grid
         // starting at the passed-in coordinates.
         boolean aFoundTheWordFlag = false;
         int aSearchWordLetterIndex = 0;
-        int aGridLetterIndex = theColumn;
-        List<String> aGridRow = myPuzzleGrid.get(theRow);
+        int aRowLength = myPuzzleGrid.get(theRow).size();
+        int aGridRowIndex = theRow;
+        int aGridColumnIndex = theColumn;
+
         while ((aSearchWordLetterIndex < theSearchWord.length()) &&
-               (aGridLetterIndex < aGridRow.size()))
+               ((aGridColumnIndex >= 0) && (aGridColumnIndex < aRowLength)) &&
+               ((aGridRowIndex >= 0) && (aGridRowIndex < myPuzzleGrid.size())))
         {
             // Get the current grid letter.
+            List<String> aGridRow = myPuzzleGrid.get(aGridRowIndex);
+            Character aGridLetter = aGridRow.get(aGridColumnIndex).charAt(0);
+
             Character aSearchWordLetter = theSearchWord.charAt(aSearchWordLetterIndex);
-            Character aGridLetter = aGridRow.get(aGridLetterIndex).charAt(0);
+
             if (aSearchWordLetter == aGridLetter)
             {
                 // The next letter was found
                 if (aSearchWordLetterIndex < (theSearchWord.length() - 1))
                 {
-                    theSearchResult.append("(" + aGridLetterIndex + "," + theRow + "),");
+                    theSearchResult.append("(" + aGridColumnIndex + "," + aGridRowIndex + "),");
                 }
                 else
                 {
                     // Found the last character, done searching for the word!
-                    theSearchResult.append("(" + aGridLetterIndex + "," + theRow + ")");
+                    theSearchResult.append("(" + aGridColumnIndex + "," + aGridRowIndex + ")");
                     aFoundTheWordFlag = true;
                     break;
                 }
@@ -202,7 +249,8 @@ public class WordSearch {
 
             // Move to the next letter in the search word and the grid.
             aSearchWordLetterIndex++;
-            aGridLetterIndex++;
+            aGridColumnIndex += theHorizontalDirection;
+            aGridRowIndex += theVerticalDirection;
         }
 
         if (aFoundTheWordFlag)
@@ -217,59 +265,5 @@ public class WordSearch {
             theSearchResult.setLength(0);
             return false;
         }
-    }
-    
-    // This method searches downward from the given grid position for the given search word.
-    private boolean searchDownward(int theRow, int theColumn, String theSearchWord, StringBuilder theSearchResult)
-    {
-        // Run through the letters of the search word to see if it is in the grid
-        // starting at the passed-in coordinates.
-        boolean aFoundTheWordFlag = false;
-        int aSearchWordLetterIndex = 0;
-        int aGridLetterIndex = theRow;
-        while ((aSearchWordLetterIndex < theSearchWord.length()) &&
-               (aGridLetterIndex < myPuzzleGrid.size()))
-        {
-            // Get the current grid letter.
-            Character aSearchWordLetter = theSearchWord.charAt(aSearchWordLetterIndex);
-            Character aGridLetter = myPuzzleGrid.get(aGridLetterIndex).get(theColumn).charAt(0);
-            if (aSearchWordLetter == aGridLetter)
-            {
-                // The next letter was found
-                if (aSearchWordLetterIndex < (theSearchWord.length() - 1))
-                {
-                    theSearchResult.append("(" + theColumn + "," + aGridLetterIndex + "),");
-                }
-                else
-                {
-                    // Found the last character, done searching for the word!
-                    theSearchResult.append("(" + theColumn + "," + aGridLetterIndex + ")");
-                    aFoundTheWordFlag = true;
-                    break;
-                }
-            }
-            else
-            {
-                // The next grid letter does NOT match the next letter in the search word
-                break;
-            }
-
-            // Move to the next letter in the search word and the grid.
-            aSearchWordLetterIndex++;
-            aGridLetterIndex++;
-        }
-
-        if (aFoundTheWordFlag)
-        {
-            // Found the word, finish up the search result and return success!
-            theSearchResult.append("\n");
-            return true;
-        }
-        else
-        {
-            // Didn't find the word, clear the search result and return failure.
-            theSearchResult.setLength(0);
-            return false;
-        }
-    }
+    }  
 }
