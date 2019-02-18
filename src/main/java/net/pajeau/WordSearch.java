@@ -56,7 +56,7 @@ public class WordSearch {
                 throw new IOException("Failed to read a list of search words.");
             }
 
-            // Each subsequent line contains a row of the grid.
+            // Each subsequent line contains a row of the grid - read them all in.
             myPuzzleGrid = new ArrayList<List<String>>();
             String aLine;
             while ((aLine = aBufferedReader.readLine()) != null)
@@ -70,6 +70,17 @@ public class WordSearch {
                 // The minimum search word is 2 letters long so the grid must be at least two rows tall to be square.
                 System.out.println("The grid has too few rows.");
                 throw new IOException("Invalid puzzle grid - too few rows.");
+            }
+
+            // Make sure the grid is square.
+            for (List<String> aRow : myPuzzleGrid)
+            {
+                // Each line should have  the same number of columns as there are rows.
+                if (aRow.size() != myPuzzleGrid.size())
+                {
+                    System.out.println("The grid is not square.");
+                    throw new IOException("Invalid puzzle grid - not square.");
+                }
             }
         }
         catch (IOException anException)
