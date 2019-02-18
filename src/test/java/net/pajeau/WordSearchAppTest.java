@@ -263,4 +263,38 @@ public class WordSearchAppTest {
 
         assertEquals(anExpectedResult, aPuzzleSolution);
     }
+
+    @Test public void wordSearchCanFindForwardAndDownwardDiagonalWords() {
+        String aPuzzleGrid = 
+            "MULDER,SCULLY,CSM\n" + 
+            "L,M,U,K,E,Z,Z,W\n" + 
+            "H,O,S,P,J,P,R,J\n" +
+            "B,M,J,C,O,E,Q,E\n" +
+            "A,Y,U,O,U,D,I,R\n" +
+            "X,P,E,L,I,L,K,Z\n" +
+            "B,C,Q,B,D,A,L,E\n" +
+            "O,K,S,I,K,E,M,Y\n" +
+            "K,Y,L,M,Q,D,R,N\n";
+            
+        StringReader aStringReader = new StringReader(aPuzzleGrid);
+        String aPuzzleSolution = "";
+
+        try
+        {
+             aPuzzleSolution = myWordSearch.solvePuzzle(aStringReader);
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+
+        aStringReader.close();
+
+        String anExpectedResult = 
+            "MULDER: (1,2),(2,3),(3,4),(4,5),(5,6),(6,7)\n" + 
+            "SCULLY: (2,1),(3,2),(4,3),(5,4),(6,5),(7,6)\n" + 
+            "CSM: (1,5),(2,6),(3,7)\n";
+
+        assertEquals(anExpectedResult, aPuzzleSolution);
+    }
 }
