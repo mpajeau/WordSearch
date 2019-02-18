@@ -177,14 +177,14 @@ public class WordSearchAppTest {
         assertNotNull("No IOException was thrown!", anException);
     }
 
-    // NOTE: this test requires the "OriginalStarTrekWordSearch.txt" file
+    // NOTE: this test requires the "ModifiedStarTrekWordSearch.txt" file
     // to exist where App.java can find it!
     @Test public void wordSearchCanImportAPuzzleFromATextFile() {
         Exception anException = null;
 
         try
         {
-            String[] anArgumentList = {"OriginalStarTrekWordSearch.txt"};
+            String[] anArgumentList = {"ModifiedStarTrekWordSearch.txt"};
             WordSearchApp.main(anArgumentList);
         }
         catch (Exception e)
@@ -294,6 +294,40 @@ public class WordSearchAppTest {
             "MULDER: (1,2),(2,3),(3,4),(4,5),(5,6),(6,7)\n" + 
             "SCULLY: (2,1),(3,2),(4,3),(5,4),(6,5),(7,6)\n" + 
             "CSM: (1,5),(2,6),(3,7)\n";
+
+        assertEquals(anExpectedResult, aPuzzleSolution);
+    }
+
+    @Test public void wordSearchCanFindForwardAndUpwardDiagonalWords() {
+        String aPuzzleGrid = 
+            "DEAN,SAM,CASTIEL\n" + 
+            "L,M,U,K,N,Z,Z,W\n" + 
+            "H,O,S,A,J,P,R,L\n" +
+            "B,L,E,S,O,E,E,E\n" +
+            "A,D,U,O,U,I,I,R\n" +
+            "X,P,E,Q,T,R,K,Z\n" +
+            "B,C,Q,S,D,A,L,M\n" +
+            "O,K,A,I,K,G,A,Y\n" +
+            "K,C,L,M,Q,S,R,N\n";
+            
+        StringReader aStringReader = new StringReader(aPuzzleGrid);
+        String aPuzzleSolution = "";
+
+        try
+        {
+             aPuzzleSolution = myWordSearch.solvePuzzle(aStringReader);
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+
+        aStringReader.close();
+
+        String anExpectedResult = 
+            "DEAN: (1,3),(2,2),(3,1),(4,0)\n" + 
+            "SAM: (5,7),(6,6),(7,5)\n" + 
+            "CASTIEL: (1,7),(2,6),(3,5),(4,4),(5,3),(6,2),(7,1)\n";
 
         assertEquals(anExpectedResult, aPuzzleSolution);
     }

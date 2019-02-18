@@ -16,7 +16,7 @@
             "request": "launch",
             "mainClass": "net.pajeau.WordSearchApp",
             "projectName": "WordSearch",
-            "args": "OriginalStarTrekWordSearch.txt"
+            "args": "ModifiedStarTrekWordSearch.txt"
         }
     ]
 }

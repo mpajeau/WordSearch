@@ -182,6 +182,11 @@ public class WordSearch {
                         {
                             aFoundFlag = true;
                         }
+                        // Search diagonally, foward & upward
+                        else if (search(aRow, aColumn, FORWARD, UPWARD, aSearchWord.getKey(), aSearchResult))
+                        {
+                            aFoundFlag = true;
+                        }
 
                         if (aFoundFlag)
                         {
