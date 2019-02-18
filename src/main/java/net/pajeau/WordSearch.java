@@ -5,8 +5,9 @@ import java.util.*;
 
 public class WordSearch {
 
-    // This field contains the list of words to be searched for in the current puzzle.
-    private List<String> mySearchWords;
+    // This field contains the list of words to be searched for in the current puzzle
+    // as well as any search result from searching the grid for the word.
+    private Map<String,String> mySearchWords;
 
     // This field contains the puzzle grid to be searched.
     private List<List<String>> myPuzzleGrid;
@@ -39,14 +40,21 @@ public class WordSearch {
             String aSearchWordList;
             if ((aSearchWordList = aBufferedReader.readLine()) != null)
             {
-                mySearchWords = Arrays.asList(aSearchWordList.split(","));
+                List<String> aSearchWordArray = new ArrayList<String>();
+                mySearchWords = new LinkedHashMap<String, String>();
+                aSearchWordArray = Arrays.asList(aSearchWordList.split(","));
 
-                for (String aWord : mySearchWords)
+                for (String aWord : aSearchWordArray)
                 {
                     if (aWord.length() < 2)
                     {
                         System.out.println("Search words must be at least two characters long.");
                         throw new IOException("Invalid search word found.");
+                    }
+                    else
+                    {
+                        // Build an ordered map of the search words with a default search result.
+                        mySearchWords.put(aWord, "NOT FOUND");
                     }
                 }
             }
@@ -112,9 +120,14 @@ public class WordSearch {
 
         StringBuilder aPuzzleSolution = new StringBuilder();
 
-        aPuzzleSolution.append("LUKE: (1,0),(2,0),(3,0),(4,0)\n");
-        aPuzzleSolution.append("HAN: (5,7),(6,7),(7,7)\n");
-        aPuzzleSolution.append("CHEWIE: (0,4),(1,4),(2,4),(3,4),(4,4),(5,4)\n");
+        mySearchWords.put("LUKE", "(1,0),(2,0),(3,0),(4,0)\n");
+        mySearchWords.put("HAN", "(5,7),(6,7),(7,7)\n");
+        mySearchWords.put("CHEWIE", "(0,4),(1,4),(2,4),(3,4),(4,4),(5,4)\n");
+
+        for (Map.Entry<String, String> aSearchWord : mySearchWords.entrySet())
+        {
+            aPuzzleSolution.append(aSearchWord.getKey() + ": " + aSearchWord.getValue());
+        }
 
         return aPuzzleSolution.toString();
     }
