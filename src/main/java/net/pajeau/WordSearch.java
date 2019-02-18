@@ -120,15 +120,99 @@ public class WordSearch {
 
         StringBuilder aPuzzleSolution = new StringBuilder();
 
-        mySearchWords.put("LUKE", "(1,0),(2,0),(3,0),(4,0)\n");
-        mySearchWords.put("HAN", "(5,7),(6,7),(7,7)\n");
-        mySearchWords.put("CHEWIE", "(0,4),(1,4),(2,4),(3,4),(4,4),(5,4)\n");
-
+        // Search through the grid for each search word.
         for (Map.Entry<String, String> aSearchWord : mySearchWords.entrySet())
         {
+            for (int aRow = 0; aRow < myPuzzleGrid.size(); aRow++)
+            {
+                List<String> aGridRow = myPuzzleGrid.get(aRow);
+                for (int aColumn = 0; aColumn < aGridRow.size(); aColumn++)
+                {
+                    // Get the current grid letter.
+                    Character aGridLetter = myPuzzleGrid.get(aRow).get(aColumn).charAt(0);
+    
+                    // See if any search words start with the current grid letter.
+                    if (aGridLetter == aSearchWord.getKey().charAt(0))
+                    {
+                        // The current grid letter matches the first letter of the current search word.
+                        // Search the grid around the current letter to see if it's the start of the
+                        // current search word.
+                        boolean aFoundFlag = false;
+                        StringBuilder aSearchResult = new StringBuilder();
+                        if (searchForward(aRow, aColumn, aSearchWord.getKey(), aSearchResult))
+                        {
+                            aFoundFlag = true;
+                        }
+
+                        if (aFoundFlag)
+                        {
+                            // Found the search word!  Record its position in the list of search words.
+                            mySearchWords.put(aSearchWord.getKey(), aSearchResult.toString());
+                        }
+                    }
+                }
+            }
+
+            // Add the search word to the puzzle solution.
             aPuzzleSolution.append(aSearchWord.getKey() + ": " + aSearchWord.getValue());
         }
 
         return aPuzzleSolution.toString();
     }
+
+    // This method searches forward from the given grid position for the given search word.
+    private boolean searchForward(int theRow, int theColumn, String theSearchWord, StringBuilder theSearchResult)
+    {
+        // Run through the letters of the search word to see if it is in the grid
+        // starting at the passed-in coordinates.
+        boolean aFoundTheWordFlag = false;
+        int aSearchWordLetterIndex = 0;
+        int aGridLetterIndex = theColumn;
+        List<String> aGridRow = myPuzzleGrid.get(theRow);
+        while ((aSearchWordLetterIndex < theSearchWord.length()) &&
+               (aGridLetterIndex < aGridRow.size()))
+        {
+            // Get the current grid letter.
+            Character aSearchWordLetter = theSearchWord.charAt(aSearchWordLetterIndex);
+            Character aGridLetter = aGridRow.get(aGridLetterIndex).charAt(0);
+            if (aSearchWordLetter == aGridLetter)
+            {
+                // The next letter was found
+                if (aSearchWordLetterIndex < (theSearchWord.length() - 1))
+                {
+                    theSearchResult.append("(" + aGridLetterIndex + "," + theRow + "),");
+                }
+                else
+                {
+                    // Found the last character, done searching for the word!
+                    theSearchResult.append("(" + aGridLetterIndex + "," + theRow + ")");
+                    aFoundTheWordFlag = true;
+                    break;
+                }
+            }
+            else
+            {
+                // The next grid letter does NOT match the next letter in the search word
+                break;
+            }
+
+            // Move to the next letter in the search word and the grid.
+            aSearchWordLetterIndex++;
+            aGridLetterIndex++;
+        }
+
+        if (aFoundTheWordFlag)
+        {
+            // Found the word, finish up the search result and return success!
+            theSearchResult.append("\n");
+            return true;
+        }
+        else
+        {
+            // Didn't find the word, clear the search result and return failure.
+            theSearchResult.setLength(0);
+            return false;
+        }
+    }
+    
 }
