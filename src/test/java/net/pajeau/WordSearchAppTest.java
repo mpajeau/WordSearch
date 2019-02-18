@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 
 import java.io.*;
 
-public class AppTest {
+public class WordSearchAppTest {
     private static WordSearch myWordSearch;
 
     @BeforeClass public static void setupTestSession()
@@ -175,6 +175,25 @@ public class AppTest {
         aStringReader.close();
 
         assertNotNull("No IOException was thrown!", anException);
+    }
+
+    // NOTE: this test requires the "OriginalStarTrekWordSearch.txt" file
+    // to exist where App.java can find it!
+    @Test public void wordSearchCanImportAPuzzleFromATextFile() {
+        Exception anException = null;
+
+        try
+        {
+            String[] anArgumentList = {"OriginalStarTrekWordSearch.txt"};
+            WordSearchApp.main(anArgumentList);
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+            anException = e;
+        }
+
+        assertNull("An exception was thrown!", anException);
     }
 
     @Test public void wordSearchCanFindForwardHorizontalWords() {

@@ -54,7 +54,7 @@ public class WordSearch {
                     else
                     {
                         // Build an ordered map of the search words with a default search result.
-                        mySearchWords.put(aWord, "NOT FOUND");
+                        mySearchWords.put(aWord, "NOT FOUND\n");
                     }
                 }
             }
