@@ -1,11 +1,22 @@
 package net.pajeau;
 
 import java.io.*;
+import java.util.*;
 
 public class WordSearch {
 
     // This field contains the list of words to be searched for in the current puzzle.
-    private String[] mySearchWords;
+    private List<String> mySearchWords;
+
+    // This field contains the puzzle grid to be searched.
+    private List<List<String>> myPuzzleGrid;
+
+    // This method clears the current puzzle.
+    public void ResetPuzzle()
+    {
+        mySearchWords = null;
+        myPuzzleGrid = null;
+    }
 
     // This method imports a puzzle from a passed-in Reader (e.g., string or file).  The puzzle
     // should contain a list of comma-separated search words on the first line.  Each search word
@@ -28,7 +39,7 @@ public class WordSearch {
             String aSearchWordList;
             if ((aSearchWordList = aBufferedReader.readLine()) != null)
             {
-                mySearchWords = aSearchWordList.split(",");
+                mySearchWords = Arrays.asList(aSearchWordList.split(","));
 
                 for (String aWord : mySearchWords)
                 {
@@ -45,8 +56,23 @@ public class WordSearch {
                 throw new IOException("Failed to read a list of search words.");
             }
 
+            // Each subsequent line contains a row of the grid.
+            myPuzzleGrid = new ArrayList<List<String>>();
+            String aLine;
+            while ((aLine = aBufferedReader.readLine()) != null)
+            {
+                myPuzzleGrid.add(Arrays.asList(aLine.split(",")));
+            }
+
+            // Make sure the grid has enough rows in it to be valid.
+            if (myPuzzleGrid.size() < 2)
+            {
+                // The minimum search word is 2 letters long so the grid must be at least two rows tall to be square.
+                System.out.println("The grid has too few rows.");
+                throw new IOException("Invalid puzzle grid - too few rows.");
+            }
         }
-        catch (Exception anException)
+        catch (IOException anException)
         {
             System.out.println("Caught an unknown exception while parsing the puzzle input.");
             throw anException;

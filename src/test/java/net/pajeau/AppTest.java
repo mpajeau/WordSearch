@@ -18,6 +18,11 @@ public class AppTest {
         myWordSearch = new WordSearch();
     }
 
+    @Before public void setupOneTest()
+    {
+        myWordSearch.ResetPuzzle();
+    }
+
     @Test public void wordSearchThrowsIOExceptionIfPuzzleDataIsEmpty() {
         IOException anException = null;
 
@@ -30,6 +35,7 @@ public class AppTest {
         }
         catch (IOException e)
         {
+            System.out.println(e.getMessage());
             anException = e;
         }
 
@@ -48,6 +54,29 @@ public class AppTest {
         }
         catch (IOException e)
         {
+            System.out.println(e.getMessage());
+            anException = e;
+        }
+
+        assertNotNull("No IOException was thrown!", anException);
+    }
+
+    @Test public void wordSearchThrowsIOExceptionIfPuzzleGridHasFewerThanTwoLines() {
+        IOException anException = null;
+
+        String anInvalidPuzzleGrid = 
+            "BONES,KHAN,KIRK,SCOTTY,SPOCK,SULU,UHURA,CHEKOV\n" + 
+            "U,M,K,H,U,L,K,I,N,V,J,O,C,W,E\n";
+
+        StringReader aStringReader = new StringReader(anInvalidPuzzleGrid);
+
+        try
+        {
+            myWordSearch.importPuzzle(aStringReader);
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
             anException = e;
         }
 
