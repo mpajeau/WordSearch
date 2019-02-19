@@ -365,4 +365,38 @@ public class WordSearchAppTest {
 
         assertEquals(anExpectedResult, aPuzzleSolution);
     }
+
+    @Test public void wordSearchCanFindBackwardAndUpwardVerticalWords() {
+        String aPuzzleGrid = 
+            "FRODO,GANDALF,SAM\n" + 
+            "F,M,U,K,N,Z,Z,W\n" + 
+            "M,L,S,R,M,P,R,L\n" +
+            "T,L,A,K,O,A,E,E\n" +
+            "O,M,U,D,U,K,S,R\n" +
+            "A,D,E,U,N,K,K,Z\n" +
+            "B,C,O,B,D,A,L,M\n" +
+            "O,K,A,R,K,W,G,Y\n" +
+            "K,C,L,M,F,T,R,N\n";
+            
+        StringReader aStringReader = new StringReader(aPuzzleGrid);
+        String aPuzzleSolution = "";
+
+        try
+        {
+             aPuzzleSolution = myWordSearch.solvePuzzle(aStringReader);
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+
+        aStringReader.close();
+
+        String anExpectedResult = 
+            "FRODO: (4,7),(3,6),(2,5),(1,4),(0,3)\n" + 
+            "GANDALF: (6,6),(5,5),(4,4),(3,3),(2,2),(1,1),(0,0)\n" + 
+            "SAM: (6,3),(5,2),(4,1)\n";
+
+        assertEquals(anExpectedResult, aPuzzleSolution);
+    }
 }
