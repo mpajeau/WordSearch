@@ -267,7 +267,7 @@ public class WordSearchAppTest {
     @Test public void wordSearchCanFindForwardAndDownwardDiagonalWords() {
         String aPuzzleGrid = 
             "MULDER,SCULLY,CSM\n" + 
-            "L,M,U,K,E,Z,Z,W\n" + 
+            "L,R,U,K,E,Z,Z,W\n" + 
             "H,O,S,P,J,P,R,J\n" +
             "B,M,J,C,O,E,Q,E\n" +
             "A,Y,U,O,U,D,I,R\n" +
@@ -498,6 +498,90 @@ public class WordSearchAppTest {
             "BATWOMAN: (7,0),(6,1),(5,2),(4,3),(3,4),(2,5),(1,6),(0,7)\n" + 
             "BATGIRL: (7,0),(7,1),(7,2),(7,3),(7,4),(7,5),(7,6)\n" + 
             "BATMAN: (7,0),(6,0),(5,0),(4,0),(3,0),(2,0)\n";
+
+        assertEquals(anExpectedResult, aPuzzleSolution);
+    }
+
+    @Test public void wordSearchOnlyFindsTheFirstOccurrenceOfASearchWord() {
+        // MAL is in the puzzle grid three times:
+        //    (3,2),(2,2),(1,2) AND
+        //    (1,3),(2,3),(3,3) AND
+        //    (2,5),(2,6),(2,7)
+        String aPuzzleGrid = 
+            "MAL,RIVER,JAYNE\n" + 
+            "L,M,N,Y,M,T,A,E\n" + 
+            "E,H,L,U,A,B,R,A\n" +
+            "T,L,A,M,O,P,I,T\n" +
+            "O,M,A,L,W,T,V,K\n" +
+            "E,N,J,A,Y,N,E,I\n" +
+            "B,U,M,B,N,I,R,P\n" +
+            "N,L,A,Y,K,W,G,L\n" +
+            "N,R,L,L,T,L,R,N\n";
+            
+        StringReader aStringReader = new StringReader(aPuzzleGrid);
+        String aPuzzleSolution = "";
+
+        try
+        {
+             aPuzzleSolution = myWordSearch.solvePuzzle(aStringReader);
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+
+        aStringReader.close();
+
+        String anExpectedResult = 
+            "MAL: (3,2),(2,2),(1,2)\n" + 
+            "RIVER: (6,1),(6,2),(6,3),(6,4),(6,5)\n" + 
+            "JAYNE: (2,4),(3,4),(4,4),(5,4),(6,4)\n";
+
+        assertEquals(anExpectedResult, aPuzzleSolution);
+    }
+
+    @Test public void wordSearchCanSolveAPuzzleWithWordsInAllDirections() {
+        String aPuzzleGrid = 
+            "BONES,KHAN,KIRK,SCOTTY,SPOCK,SULU,UHURA,CHEKOV\n" + 
+            "U,M,K,H,U,L,K,I,N,V,J,O,C,W,E\n" +
+            "L,L,S,H,K,Z,Z,W,Z,C,G,J,U,Y,G\n" + 
+            "H,S,U,P,J,P,R,J,D,H,S,B,X,T,G\n" +
+            "B,R,J,S,O,E,Q,E,T,I,K,K,G,L,E\n" +
+            "A,Y,O,A,G,C,I,R,D,Q,H,R,T,C,D\n" +
+            "S,C,O,T,T,Y,K,Z,R,E,P,P,X,P,F\n" +
+            "B,L,Q,S,L,N,E,E,E,V,U,L,F,M,Z\n" +
+            "O,K,R,I,K,A,M,M,R,M,F,B,A,V,P\n" +
+            "N,U,I,I,Y,H,Q,M,E,M,Q,R,O,F,L\n" +
+            "E,Y,Z,Y,G,K,Q,J,P,C,Q,K,Y,A,K\n" +
+            "S,J,F,Z,M,Q,I,B,D,B,E,M,K,W,D\n" +
+            "T,G,L,B,H,C,B,E,C,H,T,O,Y,I,K\n" +
+            "O,J,Y,E,U,L,N,C,C,L,Y,B,Z,U,H\n" +
+            "W,Z,M,I,S,U,K,U,R,B,I,D,U,X,S\n" +
+            "K,Y,L,B,Q,Q,P,M,D,F,C,K,E,A,B\n";
+            
+        StringReader aStringReader = new StringReader(aPuzzleGrid);
+        String aPuzzleSolution = "";
+
+        try
+        {
+             aPuzzleSolution = myWordSearch.solvePuzzle(aStringReader);
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+
+        aStringReader.close();
+
+        String anExpectedResult = 
+            "BONES: (0,6),(0,7),(0,8),(0,9),(0,10)\n" + 
+            "KHAN: (5,9),(5,8),(5,7),(5,6)\n" + 
+            "KIRK: (4,7),(3,7),(2,7),(1,7)\n" + 
+            "SCOTTY: (0,5),(1,5),(2,5),(3,5),(4,5),(5,5)\n" + 
+            "SPOCK: (2,1),(3,2),(4,3),(5,4),(6,5)\n" + 
+            "SULU: (3,3),(2,2),(1,1),(0,0)\n" + 
+            "UHURA: (4,0),(3,1),(2,2),(1,3),(0,4)\n" + 
+            "CHEKOV: (8,12),(9,11),(10,10),(11,9),(12,8),(13,7)\n";
 
         assertEquals(anExpectedResult, aPuzzleSolution);
     }

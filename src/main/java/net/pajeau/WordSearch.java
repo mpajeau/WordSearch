@@ -21,7 +21,7 @@ public class WordSearch {
     // Properties
 
     // This field contains the list of words to be searched for in the current puzzle
-    // as well as any search result from searching the grid for the word.
+    // mapped to the result from searching the grid for the word.
     private Map<String,String> mySearchWords;
 
     // This field contains the puzzle grid to be searched.
@@ -145,83 +145,145 @@ public class WordSearch {
             throw new IOException("An error occurred importing the puzzle.");
         }
 
-        StringBuilder aPuzzleSolution = new StringBuilder();
+        // Build a map of the first letters of all search words so we can quickly assess
+        // whether we need to search for a word starting at any given letter in the grid.
+        HashMap<Character, List<String>> aFirstLetterMap = new HashMap<Character, List<String>>();
+        BuildFirstLetterHashMap(aFirstLetterMap);
 
-        // Search through the grid for each search word.
-        for (Map.Entry<String, String> aSearchWord : mySearchWords.entrySet())
+        // Walk through the grid.  Check each letter to see if it's in our map of search words' first letters
+        // and, if so, search around it for one of our search words.
+        boolean anAllWordsFoundFlag = false;
+        for (int aRow = 0; aRow < myPuzzleGrid.size() && !anAllWordsFoundFlag; aRow++)
         {
-            for (int aRow = 0; aRow < myPuzzleGrid.size(); aRow++)
+            List<String> aGridRow = myPuzzleGrid.get(aRow);
+            for (int aColumn = 0; aColumn < aGridRow.size() && !anAllWordsFoundFlag; aColumn++)
             {
-                List<String> aGridRow = myPuzzleGrid.get(aRow);
-                for (int aColumn = 0; aColumn < aGridRow.size(); aColumn++)
+                // Get the current grid letter.
+                Character aGridLetter = myPuzzleGrid.get(aRow).get(aColumn).charAt(0);
+
+                // See if any search words start with the current grid letter.
+                if (aFirstLetterMap.containsKey(aGridLetter))
                 {
-                    // Get the current grid letter.
-                    Character aGridLetter = myPuzzleGrid.get(aRow).get(aColumn).charAt(0);
-    
-                    // See if any search words start with the current grid letter.
-                    if (aGridLetter == aSearchWord.getKey().charAt(0))
+                    // There's at least one search word starting with the current grid letter.
+                    // Run through the search words starting with this letter and search for each one.
+                    Iterator<String> aWordListIterator = aFirstLetterMap.get(aGridLetter).iterator();
+
+                    while (aWordListIterator.hasNext())
                     {
-                        // The current grid letter matches the first letter of the current search word.
-                        // Search the grid around the current letter to see if it's the start of the
-                        // current search word.
+                        String aSearchWord = aWordListIterator.next();
+
                         boolean aFoundFlag = false;
                         StringBuilder aSearchResult = new StringBuilder();
 
                         // Search forward
-                        if (search(aRow, aColumn, FORWARD, NONE, aSearchWord.getKey(), aSearchResult))
+                        if (search(aRow, aColumn, FORWARD, NONE, aSearchWord, aSearchResult))
                         {
                             aFoundFlag = true;
                         }
                         // Search downward
-                        else if (search(aRow, aColumn, NONE, DOWNWARD, aSearchWord.getKey(), aSearchResult))
+                        else if (search(aRow, aColumn, NONE, DOWNWARD, aSearchWord, aSearchResult))
                         {
                             aFoundFlag = true;
                         }
                         // Search diagonally, foward & downward
-                        else if (search(aRow, aColumn, FORWARD, DOWNWARD, aSearchWord.getKey(), aSearchResult))
+                        else if (search(aRow, aColumn, FORWARD, DOWNWARD, aSearchWord, aSearchResult))
                         {
                             aFoundFlag = true;
                         }
                         // Search diagonally, foward & upward
-                        else if (search(aRow, aColumn, FORWARD, UPWARD, aSearchWord.getKey(), aSearchResult))
+                        else if (search(aRow, aColumn, FORWARD, UPWARD, aSearchWord, aSearchResult))
                         {
                             aFoundFlag = true;
                         }
                         // Search upward
-                        else if (search(aRow, aColumn, NONE, UPWARD, aSearchWord.getKey(), aSearchResult))
+                        else if (search(aRow, aColumn, NONE, UPWARD, aSearchWord, aSearchResult))
                         {
                             aFoundFlag = true;
                         }
                         // Search diagonally, backward & upward
-                        else if (search(aRow, aColumn, BACKWARD, UPWARD, aSearchWord.getKey(), aSearchResult))
+                        else if (search(aRow, aColumn, BACKWARD, UPWARD, aSearchWord, aSearchResult))
                         {
                             aFoundFlag = true;
                         }
                         // Search backward
-                        else if (search(aRow, aColumn, BACKWARD, NONE, aSearchWord.getKey(), aSearchResult))
+                        else if (search(aRow, aColumn, BACKWARD, NONE, aSearchWord, aSearchResult))
                         {
                             aFoundFlag = true;
                         }
                         // Search diagonally, backward & downward
-                        else if (search(aRow, aColumn, BACKWARD, DOWNWARD, aSearchWord.getKey(), aSearchResult))
+                        else if (search(aRow, aColumn, BACKWARD, DOWNWARD, aSearchWord, aSearchResult))
                         {
                             aFoundFlag = true;
                         }
 
                         if (aFoundFlag)
                         {
-                            // Found the search word!  Record its position in the list of search words.
-                            mySearchWords.put(aSearchWord.getKey(), aSearchResult.toString());
+                            // Found the search word!                              
+                            // Remove the found word from the map of search words.
+                            aWordListIterator.remove();
+
+                            // Record the search result for the found word.
+                            mySearchWords.put(aSearchWord, aSearchResult.toString());
                         }
+                    }
+
+                    if (aFirstLetterMap.get(aGridLetter).isEmpty())
+                    {
+                        // All of the search words starting with the current grid letter have been found,
+                        // remove the letter from the first letter map.
+                        aFirstLetterMap.remove(aGridLetter);
+                    }
+
+                    if (aFirstLetterMap.isEmpty())
+                    {
+                        // All search words have been found, stop searching the grid!
+                        anAllWordsFoundFlag = true;
                     }
                 }
             }
+        }
 
-            // Add the search word to the puzzle solution.
-            aPuzzleSolution.append(aSearchWord.getKey() + ": " + aSearchWord.getValue());
+        // Build the solution string.
+        StringBuilder aPuzzleSolution = new StringBuilder();
+
+        Iterator<String> aSearchWordIterator = mySearchWords.keySet().iterator();
+        while (aSearchWordIterator.hasNext())
+        {
+            String aSearchWord = aSearchWordIterator.next();
+            aPuzzleSolution.append(aSearchWord + ": ");
+            aPuzzleSolution.append(mySearchWords.get(aSearchWord));
         }
 
         return aPuzzleSolution.toString();
+    }
+
+    // Summary: This method builds a HashMap where the words to be searched for are sorted
+    // into buckets by their first letter.
+    // Parameters:
+    //      theHashMap: the map to be filled with search word buckets
+    private void BuildFirstLetterHashMap(HashMap<Character, List<String>> theHashMap)
+    {
+        Iterator<String> aSearchWordIterator = mySearchWords.keySet().iterator();
+
+        theHashMap.clear();
+
+        while (aSearchWordIterator.hasNext())
+        {
+            String aSearchWord = aSearchWordIterator.next();
+            Character aFirstLetter = aSearchWord.charAt(0);
+            if (theHashMap.containsKey(aFirstLetter))
+            {
+                // The first letter of this search word is already in the map, add this word to its list.
+                theHashMap.get(aFirstLetter).add(aSearchWord);
+            }
+            else
+            {
+                // The first letter of this search word is NOT already in the map, add it.
+                List<String> aWordList = new ArrayList<String>();
+                aWordList.add(aSearchWord);
+                theHashMap.put(aFirstLetter, aWordList);
+            }
+        }
     }
 
     // Summary: This method searches in the given horizontal and vertical directions starting from the given grid position
