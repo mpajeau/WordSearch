@@ -187,6 +187,11 @@ public class WordSearch {
                         {
                             aFoundFlag = true;
                         }
+                        // Search upward
+                        else if (search(aRow, aColumn, NONE, UPWARD, aSearchWord.getKey(), aSearchResult))
+                        {
+                            aFoundFlag = true;
+                        }
 
                         if (aFoundFlag)
                         {

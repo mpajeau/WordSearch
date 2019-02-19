@@ -331,4 +331,38 @@ public class WordSearchAppTest {
 
         assertEquals(anExpectedResult, aPuzzleSolution);
     }
+
+    @Test public void wordSearchCanFindUpwardVerticalWords() {
+        String aPuzzleGrid = 
+            "BUCK,WILMA,TWIKKI\n" + 
+            "A,M,U,K,N,Z,Z,W\n" + 
+            "M,O,S,R,J,P,R,L\n" +
+            "L,L,E,K,O,I,E,E\n" +
+            "I,M,U,C,U,K,I,R\n" +
+            "W,P,E,U,T,K,K,Z\n" +
+            "B,C,Q,B,D,I,L,M\n" +
+            "O,K,A,I,K,W,A,Y\n" +
+            "K,C,L,M,Q,T,R,N\n";
+            
+        StringReader aStringReader = new StringReader(aPuzzleGrid);
+        String aPuzzleSolution = "";
+
+        try
+        {
+             aPuzzleSolution = myWordSearch.solvePuzzle(aStringReader);
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+
+        aStringReader.close();
+
+        String anExpectedResult = 
+            "BUCK: (3,5),(3,4),(3,3),(3,2)\n" + 
+            "WILMA: (0,4),(0,3),(0,2),(0,1),(0,0)\n" + 
+            "TWIKKI: (5,7),(5,6),(5,5),(5,4),(5,3),(5,2)\n";
+
+        assertEquals(anExpectedResult, aPuzzleSolution);
+    }
 }
