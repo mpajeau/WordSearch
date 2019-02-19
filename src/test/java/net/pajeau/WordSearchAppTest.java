@@ -366,7 +366,7 @@ public class WordSearchAppTest {
         assertEquals(anExpectedResult, aPuzzleSolution);
     }
 
-    @Test public void wordSearchCanFindBackwardAndUpwardVerticalWords() {
+    @Test public void wordSearchCanFindBackwardAndUpwardDiagonalWords() {
         String aPuzzleGrid = 
             "FRODO,GANDALF,SAM\n" + 
             "F,M,U,K,N,Z,Z,W\n" + 
@@ -396,6 +396,40 @@ public class WordSearchAppTest {
             "FRODO: (4,7),(3,6),(2,5),(1,4),(0,3)\n" + 
             "GANDALF: (6,6),(5,5),(4,4),(3,3),(2,2),(1,1),(0,0)\n" + 
             "SAM: (6,3),(5,2),(4,1)\n";
+
+        assertEquals(anExpectedResult, aPuzzleSolution);
+    }
+
+    @Test public void wordSearchCanFindBackwardHorizontalWords() {
+        String aPuzzleGrid = 
+            "CLARK,DIANA,BRUCE\n" + 
+            "L,M,U,K,N,Z,Z,W\n" + 
+            "M,O,E,C,U,R,B,L\n" +
+            "T,L,A,K,O,A,E,E\n" +
+            "O,M,U,D,U,K,S,R\n" +
+            "A,N,A,I,D,K,K,Z\n" +
+            "B,C,O,B,D,A,L,M\n" +
+            "O,K,A,R,K,W,G,Y\n" +
+            "K,R,A,L,C,T,R,N\n";
+            
+        StringReader aStringReader = new StringReader(aPuzzleGrid);
+        String aPuzzleSolution = "";
+
+        try
+        {
+             aPuzzleSolution = myWordSearch.solvePuzzle(aStringReader);
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+
+        aStringReader.close();
+
+        String anExpectedResult = 
+            "CLARK: (4,7),(3,7),(2,7),(1,7),(0,7)\n" + 
+            "DIANA: (4,4),(3,4),(2,4),(1,4),(0,4)\n" + 
+            "BRUCE: (6,1),(5,1),(4,1),(3,1),(2,1)\n";
 
         assertEquals(anExpectedResult, aPuzzleSolution);
     }
