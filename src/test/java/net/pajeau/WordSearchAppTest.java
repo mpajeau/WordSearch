@@ -467,4 +467,38 @@ public class WordSearchAppTest {
 
         assertEquals(anExpectedResult, aPuzzleSolution);
     }
+
+    @Test public void wordSearchCanFindMultipleWordsStartingAtTheSameLetter() {
+        String aPuzzleGrid = 
+            "BATWOMAN,BATGIRL,BATMAN\n" + 
+            "L,M,N,A,M,T,A,B\n" + 
+            "E,H,L,U,A,B,A,A\n" +
+            "T,L,E,K,O,T,E,T\n" +
+            "O,V,U,T,W,T,T,G\n" +
+            "E,N,M,O,D,V,K,I\n" +
+            "B,U,M,B,N,I,L,R\n" +
+            "N,A,A,Y,K,W,G,L\n" +
+            "N,R,K,L,T,L,R,N\n";
+            
+        StringReader aStringReader = new StringReader(aPuzzleGrid);
+        String aPuzzleSolution = "";
+
+        try
+        {
+             aPuzzleSolution = myWordSearch.solvePuzzle(aStringReader);
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+
+        aStringReader.close();
+
+        String anExpectedResult = 
+            "BATWOMAN: (7,0),(6,1),(5,2),(4,3),(3,4),(2,5),(1,6),(0,7)\n" + 
+            "BATGIRL: (7,0),(7,1),(7,2),(7,3),(7,4),(7,5),(7,6)\n" + 
+            "BATMAN: (7,0),(6,0),(5,0),(4,0),(3,0),(2,0)\n";
+
+        assertEquals(anExpectedResult, aPuzzleSolution);
+    }
 }
