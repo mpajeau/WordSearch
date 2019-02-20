@@ -60,27 +60,7 @@ public class WordSearch {
 
             // The first line should contain the list of words to be searched for.
             String aSearchWordList;
-            if ((aSearchWordList = aBufferedReader.readLine()) != null)
-            {
-                List<String> aSearchWordArray = new ArrayList<String>();
-                mySearchWords = new LinkedHashMap<String, String>();
-                aSearchWordArray = Arrays.asList(aSearchWordList.split(","));
-
-                for (String aWord : aSearchWordArray)
-                {
-                    if (aWord.length() < 2)
-                    {
-                        System.out.println("Search words must be at least two characters long.");
-                        throw new IOException("Invalid search word found.");
-                    }
-                    else
-                    {
-                        // Build an ordered map of the search words with a default search result.
-                        mySearchWords.put(aWord, "NOT FOUND\n");
-                    }
-                }
-            }
-            else
+            if ((aSearchWordList = aBufferedReader.readLine()) == null)
             {
                 System.out.println("No search words were found in the puzzle file.");
                 throw new IOException("Failed to read a list of search words.");
@@ -112,6 +92,26 @@ public class WordSearch {
                     throw new IOException("Invalid puzzle grid - not square.");
                 }
             }
+
+            // Make sure the search words are at least 2 characters long but not longer than the grid is wide/tall.
+            List<String> aSearchWordArray = new ArrayList<String>();
+            mySearchWords = new LinkedHashMap<String, String>();
+            aSearchWordArray = Arrays.asList(aSearchWordList.split(","));
+
+            for (String aWord : aSearchWordArray)
+            {
+                if (aWord.length() < 2 || aWord.length() > myPuzzleGrid.size())
+                {
+                    System.out.println("Search words must be at least two characters long and fit within the grid.");
+                    throw new IOException("Invalid search word found.");
+                }
+                else
+                {
+                    // Build an ordered map of the search words with a default search result.
+                    mySearchWords.put(aWord, "NOT FOUND\n");
+                }
+            }
+
         }
         catch (IOException anException)
         {
@@ -171,7 +171,6 @@ public class WordSearch {
                     while (aWordListIterator.hasNext())
                     {
                         String aSearchWord = aWordListIterator.next();
-
                         boolean aFoundFlag = false;
                         StringBuilder aSearchResult = new StringBuilder();
 
@@ -307,6 +306,23 @@ public class WordSearch {
         int aRowLength = myPuzzleGrid.get(theRow).size();
         int aGridRowIndex = theRow;
         int aGridColumnIndex = theColumn;
+
+        // Check to see if the word being sought will fit in the grid starting at the given position.
+        int aGridHeight = myPuzzleGrid.size();
+        int aGridWidth = myPuzzleGrid.get(0).size();
+        int aSearchWordLength = theSearchWord.length();
+
+        if ((theHorizontalDirection == FORWARD && (aGridWidth - theColumn) < aSearchWordLength) ||
+            (theHorizontalDirection == BACKWARD && (theColumn + 1) < aSearchWordLength) ||
+            (theVerticalDirection == DOWNWARD && (aGridHeight - theRow) < aSearchWordLength) ||
+            (theVerticalDirection == UPWARD && (theRow + 1) < aSearchWordLength))
+
+        {
+            // The starting point is too close to an edge of the grid for the given
+            // word to fit.  
+            theSearchResult.setLength(0);
+            return false;
+        }
 
         while ((aSearchWordLetterIndex < theSearchWord.length()) &&
                ((aGridColumnIndex >= 0) && (aGridColumnIndex < aRowLength)) &&

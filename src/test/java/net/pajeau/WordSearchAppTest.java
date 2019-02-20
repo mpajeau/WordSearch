@@ -65,6 +65,37 @@ public class WordSearchAppTest {
         assertNotNull("No IOException was thrown!", anException);
     }
 
+    @Test public void wordSearchThrowsIOExceptionIfSearchWordsAreLongerThanTheGrid() {
+        IOException anException = null;
+
+        String anInvalidPuzzleGrid = 
+            "LUKE,HAN,CHEWBACCA\n" + 
+            "L,L,U,K,E,Z,Z,W\n" + 
+            "H,S,U,P,J,P,R,J\n" +
+            "B,R,J,S,O,E,Q,E\n" +
+            "A,Y,O,A,G,C,I,R\n" +
+            "C,H,E,W,I,E,K,Z\n" +
+            "B,L,Q,S,L,N,E,E\n" +
+            "O,K,R,I,K,A,M,M\n" +
+            "K,Y,L,B,Q,H,A,N\n";
+
+        StringReader aStringReader = new StringReader(anInvalidPuzzleGrid);
+
+        try
+        {
+            myWordSearch.importPuzzle(aStringReader);
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+            anException = e;
+        }
+
+        aStringReader.close();
+
+        assertNotNull("No IOException was thrown!", anException);
+    }
+
     @Test public void wordSearchThrowsIOExceptionIfNoSearchWordsAreSubmitted() {
         IOException anException = null;
 
@@ -582,6 +613,94 @@ public class WordSearchAppTest {
             "SULU: (3,3),(2,2),(1,1),(0,0)\n" + 
             "UHURA: (4,0),(3,1),(2,2),(1,3),(0,4)\n" + 
             "CHEKOV: (8,12),(9,11),(10,10),(11,9),(12,8),(13,7)\n";
+
+        assertEquals(anExpectedResult, aPuzzleSolution);
+    }
+
+    @Test public void wordSearchCanFindWordsEndingAtTheEdgesOfThePuzzle() {
+        String aPuzzleGrid = 
+            "BUFFY,WILLOW,XANDER,SPIKE,ANGEL,TARA,GILES,CORDELIA\n" + 
+            "B,U,F,F,Y,L,K,I,N,V,J,A,C,W,W\n" +
+            "W,T,N,I,Z,P,Z,W,Z,C,G,R,U,Y,I\n" + 
+            "H,S,U,P,J,P,R,J,D,H,S,A,X,T,L\n" +
+            "B,R,J,S,O,E,Q,E,T,I,K,T,G,L,L\n" +
+            "A,Y,O,A,G,C,I,R,D,Q,H,R,T,C,O\n" +
+            "S,C,O,T,T,Y,K,Z,R,E,P,P,X,P,W\n" +
+            "B,L,Q,S,L,N,E,E,E,V,S,E,L,I,G\n" +
+            "O,K,R,I,K,A,M,M,R,M,F,B,A,V,P\n" +
+            "N,U,I,I,Y,H,Q,M,E,M,Q,R,O,F,L\n" +
+            "E,Y,Z,Y,G,K,R,J,X,C,Q,K,Y,A,K\n" +
+            "L,J,F,Z,M,Q,Y,B,A,B,G,M,K,W,D\n" +
+            "E,G,L,B,H,C,D,E,N,H,I,O,Y,I,K\n" +
+            "G,J,Y,E,U,L,T,C,D,L,L,B,Z,U,H\n" +
+            "N,Z,M,I,S,U,A,U,E,B,E,D,U,X,S\n" +
+            "A,I,L,E,D,R,O,C,R,F,S,P,I,K,E\n";
+            
+        StringReader aStringReader = new StringReader(aPuzzleGrid);
+        String aPuzzleSolution = "";
+
+        try
+        {
+             aPuzzleSolution = myWordSearch.solvePuzzle(aStringReader);
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+
+        aStringReader.close();
+
+        String anExpectedResult = 
+            "BUFFY: (0,0),(1,0),(2,0),(3,0),(4,0)\n" + 
+            "WILLOW: (14,0),(14,1),(14,2),(14,3),(14,4),(14,5)\n" + 
+            "XANDER: (8,9),(8,10),(8,11),(8,12),(8,13),(8,14)\n" + 
+            "SPIKE: (10,14),(11,14),(12,14),(13,14),(14,14)\n" + 
+            "ANGEL: (0,14),(0,13),(0,12),(0,11),(0,10)\n" + 
+            "TARA: (11,3),(11,2),(11,1),(11,0)\n" + 
+            "GILES: (14,6),(13,6),(12,6),(11,6),(10,6)\n" + 
+            "CORDELIA: (7,14),(6,14),(5,14),(4,14),(3,14),(2,14),(1,14),(0,14)\n";
+
+        assertEquals(anExpectedResult, aPuzzleSolution);
+    }
+
+    @Test public void wordSearchCanFindWordsEndingInTheCornersOfThePuzzle() {
+        String aPuzzleGrid = 
+            "JACK,DANIEL,TEALC,SAMANTHA\n" + 
+            "A,U,F,F,Y,L,K,I,N,V,J,A,C,W,L\n" +
+            "W,H,N,I,Z,P,Z,W,Z,C,G,R,U,E,I\n" + 
+            "H,S,T,P,J,P,R,J,D,H,S,A,I,T,L\n" +
+            "B,R,J,N,O,E,Q,E,T,I,K,N,G,L,L\n" +
+            "A,Y,O,A,A,C,I,R,D,Q,A,R,T,C,O\n" +
+            "S,C,O,T,T,M,K,Z,R,D,P,P,X,P,W\n" +
+            "B,L,Q,S,L,N,A,E,E,V,S,E,L,I,G\n" +
+            "O,K,R,I,K,A,M,S,R,M,F,B,A,V,P\n" +
+            "N,U,I,I,Y,H,Q,M,E,M,Q,R,O,F,L\n" +
+            "E,Y,Z,Y,G,K,R,J,X,C,Q,K,Y,A,K\n" +
+            "L,J,F,Z,M,Q,Y,B,A,B,T,M,K,W,D\n" +
+            "E,G,L,J,H,C,D,E,N,H,I,E,Y,I,K\n" +
+            "G,J,A,E,U,L,T,C,D,L,L,B,A,U,H\n" +
+            "N,C,M,I,S,U,A,U,E,B,E,D,U,L,S\n" +
+            "K,I,L,E,D,R,O,C,R,F,S,P,I,K,C\n";
+            
+        StringReader aStringReader = new StringReader(aPuzzleGrid);
+        String aPuzzleSolution = "";
+
+        try
+        {
+             aPuzzleSolution = myWordSearch.solvePuzzle(aStringReader);
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+
+        aStringReader.close();
+
+        String anExpectedResult = 
+            "JACK: (3,11),(2,12),(1,13),(0,14)\n" +
+            "DANIEL: (9,5),(10,4),(11,3),(12,2),(13,1),(14,0)\n" + 
+            "TEALC: (10,10),(11,11),(12,12),(13,13),(14,14)\n" + 
+            "SAMANTHA: (7,7),(6,6),(5,5),(4,4),(3,3),(2,2),(1,1),(0,0)\n";
 
         assertEquals(anExpectedResult, aPuzzleSolution);
     }
