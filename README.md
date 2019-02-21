@@ -1,5 +1,6 @@
 # WordSearch
 
+
 This project contains a java program that can read a text file containing a list of search words and a grid of letters and then solve the puzzle by reporting where each search word occurs within the grid.
 
 ## Usage:
